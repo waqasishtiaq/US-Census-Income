@@ -112,17 +112,5 @@ seaborn
 scikit-learn
 ```
 
-## Usage
 
-1. Place the census data file in the project directory
-2. Open the notebook in Jupyter or Google Colab
-3. Update the file path in the data loading cell if needed
-4. Run all cells to reproduce the analysis
 
-## Author
-
-Data Science Take-Home Project
-
-## License
-
-This project uses publicly available US Census data for educational purposes.
