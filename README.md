@@ -1,11 +1,4 @@
-Here is a **simple, normal, clean-English README**.
-No heavy academic tone.
-No robotic lines.
-Just clear writing, like a real project someone would submit.
-
----
-
-# US Census Income Analysis – README
+# US Census Income Analysis
 
 This notebook explores the 1994–95 US Census dataset to understand which people are more likely to earn above or below $50,000. It includes basic cleaning, feature grouping, income patterns, a logistic regression model, and a final segmentation using PCA and clustering. The goal is to build a clear picture of the population and identify useful groups based on demographics and work behavior.
 
