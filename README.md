@@ -1,56 +1,128 @@
-# US Census Income Dataset – Analysis Notebook
+# US Census Income Classification and Population Segmentation
 
-This notebook explores the US Census income dataset to understand which demographic and employment factors are linked with earning above or below $50,000. The work includes data cleaning, feature engineering, exploratory analysis, modeling, and segmentation. The goal of the notebook is to build a clear understanding of income patterns and identify meaningful population groups.
+Predicting income levels and segmenting the US population using 1994-1995 Census Bureau data.
 
-## Notebook Flow
+## Overview
 
-The analysis follows these main steps:
+This project analyzes US Census data to accomplish two objectives:
 
-### 1. Data Loading and Cleaning
+1. **Income Classification:** Build a model to predict whether an individual earns above or below $50,000 annually based on demographic and employment characteristics.
 
-The dataset is loaded with proper column names. Placeholder values such as “Not in universe” and “?” are standardized. Only one column contains true missing values. Most placeholders represent real categories such as children, non-workers, or non-movers.
+2. **Population Segmentation:** Use unsupervised learning (PCA + KMeans) to identify distinct population segments for marketing and policy applications.
 
-### 2. Target Distribution
+The dataset contains 199,523 records with 42 variables covering demographics, education, employment, and financial information.
 
-The dataset is highly imbalanced. Only about 6% of individuals fall in the high-income group. This imbalance is important for both interpretation and modeling.
+## Key Results
 
-### 3. Exploratory Data Analysis
+**Classification Model:**
+- Weighted logistic regression achieves AUC of 0.91 on test data
+- Strongest predictors: education level (IV=6.00), age group (IV=4.83), worker type (IV=1.25)
+- Males have 4.2x higher odds of high income than females
+- Graduate education increases odds by 2.2x
 
-Age structure, marital status, education, sex, work activity, race, and citizenship are examined. Weighted high-income rates are calculated to reflect the survey design. Clear patterns appear:
+**Population Segmentation:**
+- 7 distinct clusters identified using KMeans on 5 PCA components
+- Segments range from children (Cluster 0, 6) to high earners (Cluster 5 with 29% high income rate)
+- Silhouette score of 0.46 indicates reasonable cluster separation
 
-* Higher education strongly boosts income.
-* Working 40+ weeks is a key factor.
-* Married individuals show higher income rates.
-* Investment income is a strong signal.
-* Males and the 39–55 age group show the highest earnings.
+## Dataset
 
-These patterns match the intuition seen in many labor and demographic studies.
+| Attribute | Value |
+|-----------|-------|
+| Source | US Census Bureau (1994-1995 CPS) |
+| Records | 199,523 |
+| Variables | 42 |
+| Target | Income above/below $50,000 |
+| Class Balance | 6.2% high income, 93.8% low income |
 
-### 4. Feature Engineering
+## Project Structure
 
-Raw categories are grouped into simpler and more useful levels. Education, worker type, marital status, citizenship, and investment indicators are consolidated. This step makes the relationships more visible and reduces noise.
+```
+census-income-analysis/
+    census-bureau.csv              <- Raw data file
+    01_final_eda.ipynb             <- Complete analysis notebook
+    README.md                      <- This file
+```
 
-### 5. Information Value (IV)
+## Notebook Contents
 
-The strongest predictors are education level, age group, worker type, investment activity, and marital status. These features also match the earlier EDA trends, confirming consistency in the data.
+1. **Data Loading and Overview**
+2. **Missing Values and Placeholder Analysis**
+3. **Target Variable Distribution**
+4. **Age Distribution Analysis**
+5. **Weighted Income Analysis by Demographics**
+6. **Weighted Income Analysis by Employment**
+7. **Feature Engineering**
+   - Judgment-based binning (education_level, age_bin, worker_type, marital_group, citizenship_status)
+   - Investment income indicators
+8. **Information Value Analysis (WOE and IV)**
+9. **Logistic Regression Model**
+10. **Population Segmentation with PCA and KMeans**
+    - Feature scaling
+    - PCA exploration and component interpretation
+    - KMeans cluster selection (elbow and silhouette)
+    - Cluster profiles and interpretation
+11. **Conclusion**
 
-### 6. Logistic Regression Model
+## Feature Engineering
 
-A weighted logistic regression model is built using the engineered features. The model achieves an AUC close to 0.91, showing strong predictive ability. Odds ratios show how each feature increases or decreases the likelihood of being in the high-income category.
+Six engineered features were created using judgment-based binning:
 
-### 7. PCA and KMeans Segmentation
+| Feature | Categories | Notes |
+|---------|------------|-------|
+| education_level | 6 levels | Collapsed from 17 original categories |
+| age_bin | 5 groups | 0-12, 12-27, 27-39, 39-55, 55-90 |
+| worker_type | 5 types | not_in_labor_force, private, government, self_employed, not_working |
+| marital_group | 5 groups | married_present, married_absent, never_married, divorced_separated, widowed |
+| citizenship_status | 3 groups | native, naturalized, non_citizen |
+| has_any_investment | Binary | Any capital gains, losses, or dividends |
 
-To understand broader population structure, PCA is applied to reduce the dimensionality, followed by KMeans clustering. Seven distinct clusters appear, including:
+## Cluster Profiles Summary
 
-* Children and teenagers
-* Older adults and retired individuals
-* Broad working-class groups
-* Mid-income mixed segments
-* A high-earning professional and self-employed group
+| Cluster | Size | Avg Age | Weeks Worked | High Income Rate | Profile |
+|---------|------|---------|--------------|------------------|---------|
+| 0 | 23.4% | 9 | 0.7 | 0.0% | Children/Dependents |
+| 1 | 17.2% | 63 | 2.5 | 1.5% | Retirees/Seniors |
+| 2 | 33.3% | 37 | 45.5 | 8.9% | Core Workers |
+| 3 | 4.8% | 37 | 23.8 | 2.5% | Mixed/Transitional |
+| 4 | 6.1% | 40 | 38.7 | 5.7% | Mid-Career Workers |
+| 5 | 8.8% | 46 | 44.3 | 28.6% | High Earners/Professionals |
+| 6 | 6.4% | 13 | 0.4 | 0.0% | Teenagers/Young Dependents |
 
-These clusters help summarize the variation in the dataset in a simple way that is easy to interpret.
+## Technical Notes
 
-## Summary
+**Survey Weights:** All income rate calculations use survey weights to produce population-representative estimates.
 
-This notebook provides a complete analysis of the US Census income dataset. It cleans and prepares the data, explores important demographic relationships, builds a strong predictive model, and identifies meaningful population segments. The overall results stay consistent across EDA, IV, and modeling, making the findings reliable and clear.
+**Placeholder Values:** "Not in universe" and "?" values were standardized to "Not_applicable" as they represent valid survey responses for non-applicable questions.
 
+**PCA Components:** 5 components explain 43% of variance. Key interpretations:
+- PC1: Work intensity and labor force status
+- PC2: Age and life stage
+- PC3: Race and demographics
+- PC4: Education, self-employment, and investment
+- PC5: Education and citizenship contrast
+
+## Requirements
+
+```
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+```
+
+## Usage
+
+1. Place the census data file in the project directory
+2. Open the notebook in Jupyter or Google Colab
+3. Update the file path in the data loading cell if needed
+4. Run all cells to reproduce the analysis
+
+## Author
+
+Data Science Take-Home Project
+
+## License
+
+This project uses publicly available US Census data for educational purposes.
