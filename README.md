@@ -1,6 +1,4 @@
-# US Census Income Classification
-&
-Marketing Segmentation Analysis
+# US Census Income Classification &  Marketing Segmentation Analysis
 
 
 ## Overview
